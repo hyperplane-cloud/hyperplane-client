@@ -7,29 +7,19 @@ import sys
 OUTPUT_FILES_BASE_DIR = "./outputs/"
 
 
-def api_fail(api_name, api_spec, response):
+def __report_test_api_fail(api_name, api_spec, response):
     if os.environ.get("HYPERPLANE_TEST_MODE_TRUE"):
-        print(f"Failed to fetch key from {api_name} with parameters: {api_spec.get('method')}, {api_spec.get('url')}",
-              f" and headers: {api_spec.get('headers')}",
-              " and got the response: ", response.status_code, response,
+        print(f"Failed to fetch key from {api_name} with parameters: "
+              f"{api_spec.get('method')}, {api_spec.get('url')}",
+              f" and headers: "
+              f"{api_spec.get('headers')}",
+              f" and got the response: "
+              f"{response} "
+              f"(response code:{response.status_code})",
               file=sys.stderr)
 
 
-def generate_headers(api_spec: dict) -> dict:
-    headers = {}
-
-    content_type = api_spec.get('Content-Type')
-    if content_type is not None:
-        headers['Content-Type'] = content_type
-
-    api_key = api_spec.get("api_key")
-    if api_key is not None:
-        headers['X-API-Key'] = api_key
-
-    return headers
-
-
-def get_api_params(api_spec_name, user_id="", job_id="", key=""):
+def __get_api_params(api_spec_name, user_id="", job_id="", key=""):
     api_specs = {
         "secrets": {
             "url": f"https://pe4exfipne.execute-api.eu-central-1.amazonaws.com/default/GetSecretByKey?userid={user_id}&secretname={key}",
@@ -44,9 +34,20 @@ def get_api_params(api_spec_name, user_id="", job_id="", key=""):
             "Content-Type": "text/plain",
         },
     }
+
     spec = api_specs.get(api_spec_name)
+
+    # generate headers (if you even found)
     if spec is not None:
-        spec["headers"] = generate_headers(spec)
+        spec["headers"] = {}
+        content_type = spec.get('Content-Type')
+        if content_type is not None:
+            spec["headers"]['Content-Type'] = content_type
+
+        api_key = spec.get("api_key")
+        if api_key is not None:
+            spec["headers"]['X-API-Key'] = api_key
+
     return spec
 
 
@@ -66,7 +67,7 @@ def get_user_id():
 
 def get_secret(key):
 
-    api_spec = get_api_params("secrets", user_id=get_user_id(), key=key)
+    api_spec = __get_api_params("secrets", user_id=get_user_id(), key=key)
 
     response = requests.request(api_spec.get("method"),
                                 api_spec.get("url"),
@@ -76,12 +77,12 @@ def get_secret(key):
 
     if response.status_code == 200:
         return response_obj
-    api_fail("secrets", api_spec, response)
+    __report_test_api_fail("secrets", api_spec, response)
     return None
 
 
 def report(analytics_str):
-    api_spec = get_api_params("analytics")
+    api_spec = __get_api_params("analytics")
 
     payload = {
         "jobID": get_job_id(),
@@ -94,7 +95,7 @@ def report(analytics_str):
                                 data=json.dumps(payload))
     if response.status_code == 200:
         return True
-    api_fail("report", api_spec, response)
+    __report_test_api_fail("report", api_spec, response)
     return False
 
 

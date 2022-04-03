@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="hyperplane",
-    version="0.0.1",
+    version="0.0.2",
     author="Hyperplane",
     author_email="adam@hyperplane.cloud",
     description="A client-code facing library exposing internal APIs for the Hyperplane.cloud platform",
