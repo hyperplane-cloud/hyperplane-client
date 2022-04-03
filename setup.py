@@ -22,6 +22,6 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    install_requires=['requests', 'json'],
+    install_requires=['requests'],
     python_requires=">=3.6",
 )
