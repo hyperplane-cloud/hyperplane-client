@@ -37,7 +37,7 @@ def __get_api_params(api_spec_name, user_id="", job_id="", key=""):
 
     spec = api_specs.get(api_spec_name)
 
-    # generate headers (if you even found)
+    # generate headers (if a valid spec was requested)
     if spec is not None:
         spec["headers"] = {}
         content_type = spec.get('Content-Type')
