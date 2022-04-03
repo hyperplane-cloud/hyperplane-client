@@ -11,6 +11,7 @@ setuptools.setup(
     description="A client-code facing library exposing internal APIs for the Hyperplane.cloud platform",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    license='This code is property of Hyperplane, all rights reserved, do not distribute',
     url="https://dev.hyperplane.cloud",
     project_urls={
         "Bug Tracker": "https://github.com/hyperplane-cloud/hyperplane-dev/issues",
