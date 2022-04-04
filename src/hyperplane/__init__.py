@@ -4,7 +4,7 @@ import os
 import sys
 
 
-OUTPUT_FILES_BASE_DIR = "./outputs/"
+OUTPUT_FILES_BASE_DIR = "outputs"
 
 
 def __report_test_api_fail(api_name, api_spec, response):
@@ -100,7 +100,7 @@ def report(analytics_str):
 
 
 def print_to_file(out_file_name, *payloads):
-    with open(OUTPUT_FILES_BASE_DIR + out_file_name, "a") as f:
+    with open(f"{OUTPUT_FILES_BASE_DIR}/{out_file_name}", "a") as f:
         for p in payloads:
             f.write(p)
 
