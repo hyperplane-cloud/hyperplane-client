@@ -8,6 +8,7 @@ ANALYTICS_API_NAME = "report"
 SECRETS_API_NAME = "secrets"
 SET_JOB_STATUS_API_NAME = "set_job_status"
 
+
 def __report_test_api_fail(api_name, api_spec, response):
     if os.environ.get("HYPERPLANE_TEST_MODE_TRUE"):
         print(f"Failed to fetch key from {api_name} with parameters: "
@@ -42,7 +43,7 @@ def __get_api_spec(api_spec_name, url_params=None):
             "Content-Type": "text/plain",
         },
         SET_JOB_STATUS_API_NAME: {
-            "url": "https://XXXXXXXXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/default/SetJobStatus",
+            "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/SetJobStatus",
             "params": {
                 "job_id": url_params.get("job_id"),
             },
