@@ -8,6 +8,34 @@ ANALYTICS_API_NAME = "report"
 SECRETS_API_NAME = "secrets"
 SET_JOB_STATUS_API_NAME = "set_job_status"
 
+API_SPECS = {
+    SECRETS_API_NAME: {
+        "url": "https://pe4exfipne.execute-api.eu-central-1.amazonaws.com/default/GetSecretByKey",
+        "required_params": [
+            "user_id",
+            "secret_name",
+        ],
+        "method": "GET",
+        "api_key": os.environ.get('HYPERPLANE_SECRETS_API_KEY'),
+        "Content-Type": "text/plain",
+    },
+    ANALYTICS_API_NAME: {
+        "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/ChangeJobStatusFromApplication",
+        "method": "PUT",
+        "api_key": os.environ.get('HYPERPLANE_ANALYTICS_API_KEY'),
+        "Content-Type": "text/plain",
+    },
+    SET_JOB_STATUS_API_NAME: {
+        "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/SetJobStatus",
+        "required_params": [
+            "job_id",
+        ],
+        "method": "PUT",
+        "api_key": os.environ.get('HYPERPLANE_SET_JOB_STATUS_API_KEY'),
+        "Content-Type": "text/plain",
+    },
+}
+
 
 def __report_test_api_fail(api_name, api_spec, response):
     if os.environ.get("HYPERPLANE_TEST_MODE_TRUE"):
@@ -21,39 +49,12 @@ def __report_test_api_fail(api_name, api_spec, response):
               file=sys.stderr)
 
 
-def __get_api_spec(api_spec_name, url_params=None):
-    if url_params is None:
-        url_params = dict()
+def __get_api_spec(api_spec_name: str, url_params: dict = None) -> dict:
+    spec = API_SPECS.get(api_spec_name)
 
-    api_specs = {
-        SECRETS_API_NAME: {
-            "url": "https://pe4exfipne.execute-api.eu-central-1.amazonaws.com/default/GetSecretByKey",
-            "params": {
-                "userid": url_params.get("user_id"),
-                "secretname": url_params.get(url_params.get("secret_name"), "key"),
-            },
-            "method": "GET",
-            "api_key": os.environ.get('HYPERPLANE_SECRETS_API_KEY'),
-            "Content-Type": "text/plain",
-        },
-        ANALYTICS_API_NAME: {
-            "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/ChangeJobStatusFromApplication",
-            "method": "PUT",
-            "api_key": os.environ.get('HYPERPLANE_ANALYTICS_API_KEY'),
-            "Content-Type": "text/plain",
-        },
-        SET_JOB_STATUS_API_NAME: {
-            "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/SetJobStatus",
-            "params": {
-                "job_id": url_params.get("job_id"),
-            },
-            "method": "PUT",
-            "api_key": os.environ.get('HYPERPLANE_SET_JOB_STATUS_API_KEY'),
-            "Content-Type": "text/plain",
-        },
-    }
-
-    spec = api_specs.get(api_spec_name)
+    # extract and set required parameters from provided param dict
+    if url_params:
+        spec["params"] = {p: url_params.get(p) for p in spec.get("required_params", [])}
 
     # generate headers (if a valid spec was requested)
     if spec is not None:
