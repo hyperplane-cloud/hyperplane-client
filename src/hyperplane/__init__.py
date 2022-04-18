@@ -1,6 +1,9 @@
 import os
 
+
 if os.environ.get("HYPERPLANE_JOB_ID"):
+    import sys
+    sys.path.append("..")
     from hyperplane_server_utils import OUTPUT_FILES_BASE_DIR
 else:
     OUTPUT_FILES_BASE_DIR = "."
