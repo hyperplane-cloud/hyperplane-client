@@ -1,12 +1,7 @@
 import os
 
 
-if os.environ.get("HYPERPLANE_JOB_ID"):
-    import sys
-    sys.path.append("..")
-    from hyperplane_server_utils import OUTPUT_FILES_BASE_DIR_ABS_PATH
-else:
-    OUTPUT_FILES_BASE_DIR_ABS_PATH = os.getcwd()
+OUTPUT_FILES_BASE_DIR_ABS_PATH = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 
 
 def get_env_param(env_param):
