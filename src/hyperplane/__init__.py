@@ -1,6 +1,7 @@
 import os
 
-
+import sys
+sys.path.append("..")
 OUTPUT_FILES_BASE_DIR_ABS_PATH = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 
 
