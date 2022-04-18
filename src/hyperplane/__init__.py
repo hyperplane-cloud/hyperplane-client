@@ -1,7 +1,6 @@
 import os
-
 import sys
-sys.path.append("..")
+
 OUTPUT_FILES_BASE_DIR_ABS_PATH = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 
 
@@ -22,6 +21,7 @@ def get_user_id():
 def get_secret(secret_name):
     if os.environ.get("HYPERPLANE_JOB_ID"):
         # On a server
+        sys.path.append("..")
         from hyperplane_server_utils import get_secret
         return get_secret(secret_name)
 
@@ -32,6 +32,7 @@ def get_secret(secret_name):
 def report(analytics_str):
     if os.environ.get("HYPERPLANE_JOB_ID"):
         # On a server
+        sys.path.append("..")
         from hyperplane_server_utils import report
         return report(analytics_str)
 
