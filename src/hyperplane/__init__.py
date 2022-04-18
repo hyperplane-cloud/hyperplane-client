@@ -4,9 +4,9 @@ import os
 if os.environ.get("HYPERPLANE_JOB_ID"):
     import sys
     sys.path.append("..")
-    from hyperplane_server_utils import OUTPUT_FILES_BASE_DIR
+    from hyperplane_server_utils import OUTPUT_FILES_BASE_DIR_ABS_PATH
 else:
-    OUTPUT_FILES_BASE_DIR = "."
+    OUTPUT_FILES_BASE_DIR_ABS_PATH = os.getcwd()
 
 
 def get_env_param(env_param):
@@ -44,7 +44,7 @@ def report(analytics_str):
 
 
 def print_to_file(out_file_name, *payloads):
-    with open(f"{OUTPUT_FILES_BASE_DIR}/{out_file_name}", "a") as f:
+    with open(f"{OUTPUT_FILES_BASE_DIR_ABS_PATH}/{out_file_name}", "a") as f:
         for p in payloads:
             f.write(p)
 
