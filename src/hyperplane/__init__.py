@@ -1,7 +1,7 @@
 import os
 import sys
 
-OUTPUT_FILES_BASE_DIR_ABS_PATH = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
+OUTPUT_FILES_DIR = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 
 
 def get_env_param(env_param):
@@ -41,6 +41,7 @@ def report(analytics_str):
 
 
 def print_to_file(out_file_name, *payloads):
+    output_files_abs_path = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
     with open(f"{OUTPUT_FILES_BASE_DIR_ABS_PATH}/{out_file_name}", "a") as f:
         for p in payloads:
             f.write(p)
