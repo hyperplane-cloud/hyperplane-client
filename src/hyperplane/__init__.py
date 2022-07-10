@@ -46,3 +46,18 @@ def print_to_file(out_file_name, *payloads):
         for p in payloads:
             f.write(p)
 
+def get_s3_credentials() -> dict:
+    ''' Return a dict with 3 keys:
+    access_key_id, secret_access_key, bucket_url
+    '''
+
+    access_key_id = get_secret("s3_access_key_id")
+    secret_access_key = get_secret("s3_access_key_secret")
+    bucket_url = get_secret("s3_bucket_name")
+
+    return {
+        "access_key_id": access_key_id,
+        "secret_access_key": secret_access_key,
+        "bucket_url": bucket_url,
+    }
+
