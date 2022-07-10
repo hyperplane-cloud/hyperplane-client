@@ -19,17 +19,6 @@ def get_user_id():
     return os.environ.get('HYPERPLANE_USER_ID')
 
 
-def get_secret(secret_name):
-    if os.environ.get("HYPERPLANE_JOB_ID"):
-        # On a server
-        sys.path.append("..")
-        from hyperplane_server_utils import get_secret
-        return get_secret(secret_name)
-
-    # running locally
-    return os.environ.get(secret_name)
-
-
 def report(analytics_str):
     if os.environ.get("HYPERPLANE_JOB_ID"):
         # On a server
