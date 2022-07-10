@@ -1,6 +1,6 @@
 import os
 import sys
-from .secret_util import get_secret, get_s3_credentials
+from .secret_utils import get_secret, get_s3_credentials
 
 OUTPUT_FILES_DIR = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 
