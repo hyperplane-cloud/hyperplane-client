@@ -3,6 +3,7 @@ import sys
 from .secret_utils import get_secret, get_s3_credentials
 
 OUTPUT_FILES_DIR = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
+OUTPUT_FILES_DIR_ABS = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
 
 
 def get_env_param(env_param):
