@@ -32,7 +32,9 @@ def report(analytics_str):
         from hyperplane_server_utils import report
         return report(analytics_str)
 
-    return print(f"REPORTED: {analytics_str}")
+    print(f"REPORTED: {analytics_str}")
+
+    return True
 
 
 def print_to_file(out_file_name, *payloads):
