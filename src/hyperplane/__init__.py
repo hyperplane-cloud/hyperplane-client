@@ -5,6 +5,7 @@ from .secret_utils import get_secret, get_s3_credentials
 from .exec_utils import is_job_running_on_server
 
 OUTPUT_FILES_DIR = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
+OUTPUT_FILES_DIR_ABS = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
 
 
 def get_env_param(env_param):
