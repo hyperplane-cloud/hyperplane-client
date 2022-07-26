@@ -1,22 +1,24 @@
 import os
 import sys
-
+from typing import Optional
 
 from .exec_utils import is_job_running_on_server
 
 
-def get_secret(secret_name):
+def get_secret(secret_name: str) -> Optional[str]:
     if is_job_running_on_server():
         sys.path.append("..")
         from hyperplane_server_utils import get_secret
         return get_secret(secret_name)
 
-    secret = os.environ.get(secret_name)
+    user_token = os.getenv("HYPERPLANE_USER_TOKEN")
 
-    if secret is None:
-        raise ValueError(f'Environment variable: {secret_name} is not set for local run')
+    if user_token:
+        sys.path.append("..")
+        from hyperplane_server_utils import get_secret_by_user_token  #how does this import will work in the user computer?
+        return get_secret_by_user_token(secret_name, user_token)
 
-    return secret
+    return os.getenv(f"HYPERPLANE_SECRET_{secret_name}")
 
 
 def get_s3_credentials() -> dict:
