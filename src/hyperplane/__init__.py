@@ -9,7 +9,7 @@ OUTPUT_FILES_DIR_ABS = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getc
 
 
 def get_env_param(env_param):
-    if is_job_running_on_server():
+    if env_param.startswith("HYPERPLANE_"):
         return None
     return os.environ.get(env_param)
 
@@ -18,7 +18,7 @@ def get_job_id():
     job_id = os.environ.get('HYPERPLANE_JOB_ID')
 
     if not job_id:
-        print("Warning: job_id is None. Please set HYPERPLANE_JOB_ID env var")
+        print("Warning: job_id is not set, returning None. If needed you can set it via the HYPERPLANE_JOB_ID environment variable")
 
     return job_id
 
@@ -27,7 +27,7 @@ def get_user_id():
     user_id = os.environ.get('HYPERPLANE_USER_ID')
 
     if not user_id:
-        print("Warning: user_id is None. Please set HYPERPLANE_USER_ID env var")
+        print("Warning: user_id is not set, returning None. If needed you can set it via the HYPERPLANE_USER_ID environment variable")
 
     return user_id
 
@@ -35,10 +35,11 @@ def get_user_id():
 def report(analytics_str):
     if is_job_running_on_server():
         sys.path.append("..")
-        from hyperplane_server_utils import report
-        return report(analytics_str)
+        from hyperplane_server_utils import report as report_from_server
+        return report_from_server(analytics_str)
 
-    print(f"REPORTED: {analytics_str}")
+    else: # running locally 
+        print(f"REPORTED: {analytics_str}")
 
     return True
 

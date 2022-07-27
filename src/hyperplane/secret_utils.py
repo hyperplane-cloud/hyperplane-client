@@ -8,17 +8,17 @@ from .exec_utils import is_job_running_on_server
 def get_secret(secret_name: str) -> Optional[str]:
     if is_job_running_on_server():
         sys.path.append("..")
-        from hyperplane_server_utils import get_secret
-        return get_secret(secret_name)
+        from hyperplane_server_utils import get_secret as get_secret_from_server
+        return get_secret_from_server(secret_name)
 
-    secret_env_var = f"HYPERPLANE_SECRET_{secret_name}"
+    else:
+        secret_env_var = f"HYPERPLANE_SECRET_{secret_name}"
+        secret_value = os.getenv(secret_env_var)
 
-    secret_value = os.getenv(secret_env_var)
+        if not secret_value:
+            print(f"Warning: {secret_name} is not set. You can set it locally by setting the {secret_env_var} environment variable")
 
-    if not secret_value:
-        print(f"Warning: {secret_name} is None. Reason: {secret_env_var} is not set with any value")
-
-    return secret_value
+        return secret_value
 
 
 def get_s3_credentials() -> dict:
