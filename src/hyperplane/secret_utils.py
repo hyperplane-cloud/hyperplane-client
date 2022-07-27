@@ -11,14 +11,14 @@ def get_secret(secret_name: str) -> Optional[str]:
         from hyperplane_server_utils import get_secret
         return get_secret(secret_name)
 
-    user_token = os.getenv("HYPERPLANE_USER_TOKEN")
+    secret_env_var = f"HYPERPLANE_SECRET_{secret_name}"
 
-    if user_token:
-        sys.path.append("..")
-        from hyperplane_server_utils import get_secret_by_user_token  #how does this import will work in the user computer?
-        return get_secret_by_user_token(secret_name, user_token)
+    secret_value = os.getenv(secret_env_var)
 
-    return os.getenv(f"HYPERPLANE_SECRET_{secret_name}")
+    if not secret_value:
+        print(f"Warning: {secret_name} is None. Reason: {secret_env_var} is not set with any value")
+
+    return secret_value
 
 
 def get_s3_credentials() -> dict:
