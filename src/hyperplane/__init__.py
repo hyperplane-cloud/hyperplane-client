@@ -2,6 +2,8 @@ import os
 import sys
 from .secret_utils import get_secret, get_s3_credentials
 
+from .exec_utils import is_job_running_on_server
+
 OUTPUT_FILES_DIR = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR", os.getcwd())
 OUTPUT_FILES_DIR_ABS = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
 
@@ -13,27 +15,39 @@ def get_env_param(env_param):
 
 
 def get_job_id():
-    return os.environ.get('HYPERPLANE_JOB_ID')
+    job_id = os.environ.get('HYPERPLANE_JOB_ID')
+
+    if not job_id:
+        print("Warning: job_id is not set, returning None. If needed you can set it via the HYPERPLANE_JOB_ID environment variable")
+
+    return job_id
 
 
 def get_user_id():
-    return os.environ.get('HYPERPLANE_USER_ID')
+    user_id = os.environ.get('HYPERPLANE_USER_ID')
+
+    if not user_id:
+        print("Warning: user_id is not set, returning None. If needed you can set it via the HYPERPLANE_USER_ID environment variable")
+
+    return user_id
 
 
 def report(analytics_str):
-    if os.environ.get("HYPERPLANE_JOB_ID"):
-        # On a server
+    if is_job_running_on_server():
         sys.path.append("..")
-        from hyperplane_server_utils import report
-        return report(analytics_str)
+        from hyperplane_server_utils import report as report_from_server
+        return report_from_server(analytics_str)
 
-    # running locally
-    return print(f"REPORTED: {analytics_str}")
+    else: # running locally 
+        print(f"REPORTED: {analytics_str}")
+
+    return True
 
 
 def print_to_file(out_file_name, *payloads):
-    output_files_abs_path = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
+    output_files_abs_path = "."  # current directory
+    if is_job_running_on_server():
+        output_files_abs_path = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
     with open(f"{output_files_abs_path}/{out_file_name}", "a") as f:
         for p in payloads:
             f.write(p)
-
