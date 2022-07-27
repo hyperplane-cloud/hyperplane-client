@@ -15,15 +15,21 @@ def get_env_param(env_param):
 
 
 def get_job_id():
-    if is_job_running_on_server():
-        return os.environ.get('HYPERPLANE_JOB_ID')
-    return "JOB_ID"
+    job_id = os.environ.get('HYPERPLANE_JOB_ID')
+
+    if not job_id:
+        print("Warning: job_id is None. Please set HYPERPLANE_JOB_ID env var")
+
+    return job_id
 
 
 def get_user_id():
-    if is_job_running_on_server():
-        return os.environ.get('HYPERPLANE_USER_ID')
-    return "USER_ID"
+    user_id = os.environ.get('HYPERPLANE_USER_ID')
+
+    if not user_id:
+        print("Warning: user_id is None. Please set HYPERPLANE_USER_ID env var")
+
+    return user_id
 
 
 def report(analytics_str):
