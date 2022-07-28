@@ -48,6 +48,11 @@ def print_to_file(out_file_name, *payloads):
     output_files_abs_path = "."  # current directory
     if is_job_running_on_server():
         output_files_abs_path = os.environ.get("HYPERPLANE_USER_OUTPUTS_DIR_ABS", os.getcwd())
+
+    # Make sure dir exists
+    output_files_parent_dir_path = os.path.dirname(output_files_abs_path)
+    os.makedirs(output_files_parent_dir_path, exist_ok=True)
+
     with open(f"{output_files_abs_path}/{out_file_name}", "a") as f:
         for p in payloads:
             f.write(p)
