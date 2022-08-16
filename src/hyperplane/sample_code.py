@@ -37,5 +37,5 @@ else:
     job_0 = hapi.get_job(job_id=jobs[0].id)
     print(job_0.id, job_0.job_name, job_0.status, job_0.creation_time)
 
-secret = hapi.create_secret(secret_name="sodkamus", secret_value="duh")
+secret = hapi.create_secret(secret_name="My_Secret", secret_value="4V3rySecr37V@lue")
 print(f"Secret created ({secret})")
