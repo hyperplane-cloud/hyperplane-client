@@ -2,7 +2,7 @@
 
 from hyperplane_api import hyperplane_api
 
-hapi = hyperplane_api().connect(api_token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMzVhYmE1NDc5ZGU2NGFkYjk4NjIyNjg3ODg1OGZhMGQiLCJncm91cF9pZCI6Ijg5MmQwMjU1LTY1YWEtNDVlNi1hY2JmLTg4ZWNjZWM0OTUxNCIsIm9yZ2FuaXphdGlvbl9uYW1lIjoiaHlwZXJwbGFuZSIsImVtYWlsIjoieWFpckBoeXBlcnBsYW5lLmNsb3VkIiwiaWF0IjoxNjYwNjM2OTkwLCJleHAiOjE2NjA2NjU3OTAsImlzcyI6Imh5cGVycGxhbmUiLCJ0b2tlbl9uYW1lIjoic2Vzc2lvbiJ9.Bj6s5zb4PECZPyIjCuvOIaLmNhr-3thSlpslUDkZyDI")
+hapi = hyperplane_api().connect(api_token="<HYPERPLANE PERSONAL ACCESS TOKEN>")
 
 new_job = hapi.create_job(job_name="hapi job",
                           git_repo_url="https://github.com/hyperplane-cloud/hyperplane-lib-demo",
