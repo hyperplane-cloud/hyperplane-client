@@ -1,16 +1,5 @@
 # job.py - job object
 
-from enum import Enum
-
-
-class JobStatus(Enum):
-    Queued = "Queued"
-    Starting = "Starting"
-    InProgress = "In Progress"
-    Cancelled = "Cancelled"
-    Done = "Done"
-    Failed = "Failed"
-
 
 class Job(object):
     def __init__(self, job_dict: dict):

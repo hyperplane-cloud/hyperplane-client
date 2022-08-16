@@ -1,4 +1,4 @@
-# sample.py - use hyperplane_api to get list of jobs
+# sample_code.py - use hyperplane_api to access hyperplane
 
 from hyperplane_api import hyperplane_api
 
