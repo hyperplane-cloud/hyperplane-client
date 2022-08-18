@@ -20,7 +20,7 @@ API_SPECS = {
         "Content-Type": "text/plain",
     },
     ANALYTICS_API_NAME: {
-        "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/ChangeJobStatusFromApplication",
+        "url": "https://4nix3yd9ga.execute-api.eu-central-1.amazonaws.com/default/ReportLogs",
         "method": "PUT",
         "api_key": os.environ.get('HYPERPLANE_ANALYTICS_API_KEY'),
         "Content-Type": "text/plain",
