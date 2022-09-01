@@ -7,8 +7,9 @@ from .exec_utils import is_job_running_on_server
 
 def get_secret(secret_name: str) -> Optional[str]:
     if is_job_running_on_server():
-        sys.path.append("..")
-        from hyperplane_server_utils import get_secret as get_secret_from_server
+        if ".." not in sys.path:
+            sys.path.append("..")
+        from get_user_secret import get_user_secret as get_secret_from_server
         return get_secret_from_server(secret_name)
 
     else:

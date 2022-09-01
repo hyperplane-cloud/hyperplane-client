@@ -25,7 +25,7 @@ def test_get_secret_when_running_remote_return_secret():
     secret_key = "a_secret_name"
     expected_secret_value = "secret_value"
     with mock.patch('src.hyperplane.secret_utils.is_job_running_on_server', lambda: True):
-        with mock.patch('hyperplane_server_utils.get_secret', mock_get_secret_by_user_token(expected_secret_value)):
+        with mock.patch('get_user_secret.get_user_secret', mock_get_secret_by_user_token(expected_secret_value)):
             actual_secret_value = get_secret(secret_key)
 
             assert actual_secret_value == expected_secret_value
