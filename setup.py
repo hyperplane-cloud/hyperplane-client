@@ -1,7 +1,29 @@
 import setuptools
+from setuptools.command.build_py import build_py
+import os
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
+
+# Known Issue: When uninstalling on windows the tons.cmd will remain
+class CustomPythonBuild(build_py):
+    def add_to_win_path(self):
+        try:
+            win_dir = os.environ.get('LOCALAPPDATA')
+            if not win_dir:
+                return
+            fp = os.path.join(win_dir, "Microsoft", "WindowsApps", "tons.cmd")
+            with open(fp, 'wt') as f:
+                f.write("@python3 -m tons_cli %*")
+        except BaseException as e:
+            pass
+
+    def run(self):
+        if os.name == 'nt':
+            self.execute(self.add_to_win_path, ())
+        build_py.run(self)
+
 
 setuptools.setup(
     name="hyperplane",
@@ -23,6 +45,12 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    install_requires=['requests'],
+    install_requires=['requests', 'click'],
     python_requires=">=3.6",
+    entry_points={
+        'console_scripts': [
+            'tons = tons_cli.__main__:main',
+        ]
+    },
+    cmdclass={'build_py': CustomPythonBuild},
 )

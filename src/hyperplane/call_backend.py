@@ -13,6 +13,7 @@ API_GetJobById = f"{BACKEND_URL}/jobs/GetJobByID"
 API_AbortRunningJob = f"{BACKEND_URL}/jobs/AbortRunningJob"
 
 API_CreateSecret = f"{SECRETS_BACKEND_URL}/secrets/CreateSecret"
+API_ListAllSecrets = f"{SECRETS_BACKEND_URL}/secrets/ListAllSecrets"
 
 METHOD_GET = "GET"
 METHOD_PATCH = "PATCH"
@@ -32,5 +33,5 @@ def call_backend(api_url: str = None, method: str = None, api_token: str = None,
             return json.loads(response.text)
         except Exception as e:
             return response.text
-    logging.error(f"Failed to invoke {api_url}. Response {response}.")
+    logging.error(f"Failed to invoke {api_url}. Response [{response.status_code}] {response.text}.")
     return None
