@@ -2,12 +2,13 @@ import json
 import click
 from tons_cli.common import sdk
 
+
 @click.group()
-def jobs():
+def job():
     pass
 
 
-@jobs.command()
+@job.command()
 def all():
     """Get all jobs"""
     jobs = sdk().get_all_jobs()
@@ -19,10 +20,10 @@ def all():
             click.echo(job)
 
 
-@jobs.command()
+@job.command()
 @click.argument('job_id', required=True)
 def get(job_id: str):
-    """Get a specific job and print its values as a JSON"""
+    """Get a specific job and prints it as a JSON"""
     job = sdk().get_job(job_id)
     if job is None:
         click.echo("Failed to get job", err=True)
@@ -30,14 +31,14 @@ def get(job_id: str):
         click.echo(json.dumps(job.job_dict))
 
 
-@jobs.command()
+@job.command()
 @click.option('--repo', help="Github repo url", required=True)
 @click.option('--instance-type', '-t', help='Instance type to run job on', required=True)
 @click.option('--name', 'job_name', help='Job name. Default: "CLI - {repo name}"')
 @click.option('--branch', '-b', default='', help='Branch name to clone repo')
 @click.option('--config', default='', help='Select hyperplane config in YML. Default is main config')
 @click.option('--instance-count', '-c', default=1, help='How many instances to run on', type=int)
-def run(
+def create(
         repo: str,
         instance_type: str,
         job_name: str,
@@ -45,7 +46,7 @@ def run(
         config: str,
         instance_count: int,
         ):
-    ''' Runs a job on tons ai'''
+    '''Creates a job on tons ai'''
     if not job_name:
         job_name = f"CLI - {repo.split('/')[-1]}"
     response = sdk().create_job(
@@ -62,7 +63,7 @@ def run(
         click.echo(json.dumps(response))
 
 
-@jobs.command()
+@job.command()
 @click.argument('job_id', required=True)
 def abort(job_id: str):
     """Aborts a job"""

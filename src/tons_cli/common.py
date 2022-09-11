@@ -55,7 +55,7 @@ def get_token() -> Optional[str]:
     return token
 
 
-def sdk():
+def sdk() -> hyperplane_sdk:
     ret = hyperplane_sdk()
     token = get_token()
     ret.connect(token)
