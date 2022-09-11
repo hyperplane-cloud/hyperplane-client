@@ -32,5 +32,5 @@ def call_backend(api_url: str = None, method: str = None, api_token: str = None,
             return json.loads(response.text)
         except Exception as e:
             return response.text
-    logging.error(f"Failed to invoke {api_url}. Response {response}.")
+    logging.error(f"Failed to invoke {api_url}. Response [{response.status_code}] {response.text}.")
     return None

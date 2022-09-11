@@ -7,19 +7,14 @@ from .exec_utils import is_job_running_on_server
 
 def get_secret(secret_name: str) -> Optional[str]:
     if is_job_running_on_server():
-        if ".." not in sys.path:
-            sys.path.append("..")
-        from get_user_secret import get_user_secret as get_secret_from_server
-        return get_secret_from_server(secret_name)
+        return _get_secret_from_server(secret_name)
+    secret_env_var = f"HYPERPLANE_SECRET_{secret_name}"
+    secret_value = os.getenv(secret_env_var)
 
-    else:
-        secret_env_var = f"HYPERPLANE_SECRET_{secret_name}"
-        secret_value = os.getenv(secret_env_var)
+    if not secret_value:
+        print(f"Warning: {secret_name} is not set. You can set it locally by setting the {secret_env_var} environment variable")
 
-        if not secret_value:
-            print(f"Warning: {secret_name} is not set. You can set it locally by setting the {secret_env_var} environment variable")
-
-        return secret_value
+    return secret_value
 
 
 def get_s3_credentials() -> dict:
@@ -37,3 +32,9 @@ def get_s3_credentials() -> dict:
         "bucket_url": bucket_url,
     }
 
+
+def _get_secret_from_server(secret_name: str) -> Optional[str]:
+    if ".." not in sys.path:
+        sys.path.append("..")
+    from get_user_secret import get_user_secret as get_secret_from_server
+    return get_secret_from_server(secret_name)

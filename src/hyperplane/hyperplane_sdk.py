@@ -1,11 +1,12 @@
 # hyperplane_api.py - hyperplane api class
 
 import os
-from call_backend import *
-from job import Job
+from hyperplane.call_backend import *
+from hyperplane.job import Job
+from hyperplane_definitions.secret_consts import DEFAULT_CATEGORY
 
 
-class hyperplane_api(object):
+class hyperplane_sdk(object):
     def __init__(self):
         self.api_token = None
 
@@ -14,7 +15,7 @@ class hyperplane_api(object):
             self.api_token = api_token
         else:
             self.api_token = os.getenv('HYPERPLANE_API_TOKEN')
-        if not api_token:
+        if not self.api_token:
             print(f"Could not find environment variable HYPERPLANE_API_TOKEN.")
             return None
         return self
@@ -66,13 +67,13 @@ class hyperplane_api(object):
             )
         return result == f"Job {job_id} Stopped"
 
-    def create_secret(self, secret_name: str, secret_value: str):
+    def create_secret(self, secret_name: str, secret_value: str, secret_category:str = DEFAULT_CATEGORY):
         result = call_backend(
             api_url=API_CreateSecret,
             method=METHOD_POST,
             api_token=self.api_token,
             secret_name=secret_name,
             secret_value=secret_value,
-            secret_category="Hyperplane.Access.Tokens",
+            secret_category=secret_category,
             )
         return result == f"Created {secret_name} successfully!"
