@@ -77,3 +77,11 @@ class hyperplane_sdk(object):
             secret_category=secret_category,
             )
         return result == f"Created {secret_name} successfully!"
+
+    def list_secrets(self):
+        result = call_backend(
+            api_url=API_ListAllSecrets,
+            method=METHOD_GET,
+            api_token=self.api_token
+            )
+        return result
