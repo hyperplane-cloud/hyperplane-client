@@ -8,14 +8,15 @@ def job():
     pass
 
 
-@job.command()
-def all():
-    """Get all jobs"""
+@job.command('list')
+def list_jobs():
+    """List all jobs"""
     jobs = sdk().get_all_jobs()
     if jobs is None:
         click.echo("Failed to get jobs", err=True)
     else:
-        click.echo(f"Found {len(jobs)} jobs:")
+        if len(jobs) == 0:
+            click.echo(f"No jobs found")
         for job in jobs:
             click.echo(job)
 

@@ -65,7 +65,7 @@ def test_job():
     assert job_dict['git_repo_url'] == repo_url
     assert job_dict['instance_type'] == instance_type
     # Get all jobs and find the canceled job
-    result_all = runner.invoke(cli, args=['job', 'all'])
+    result_all = runner.invoke(cli, args=['job', 'list'])
     assert result_all.exit_code == 0
     result_all_s = result_all.output.strip()
     result_all_lines = result_all_s.split('\n')

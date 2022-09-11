@@ -32,7 +32,7 @@ def create(name: str, value: str, category : str):
 
 
 @secret.command("list")
-def list_():
+def list_secrets():
     '''List all user secrets'''
     secret_infos = sdk().list_secrets()
     if not isinstance(secret_infos, list):
@@ -43,5 +43,5 @@ def list_():
         for secret_info in secret_infos:
             secret_category = secret_info.get("secret_category")
             secret_name = secret_info.get("secret_name")
-            click.echo(f"{secret_category}:{secret_name}")
+            click.echo(f"{secret_category}: {secret_name}")
 
