@@ -36,7 +36,7 @@ setuptools.setup(
     license='This code is property of Hyperplane, all rights reserved, do not distribute',
     url="https://dev.hyperplane.cloud",
     project_urls={
-        "Bug Tracker": "https://github.com/hyperplane-cloud/hyperplane-dev/issues",
+        "Bug Tracker": "https://github.com/hyperplane-cloud/hyperplane-client/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
