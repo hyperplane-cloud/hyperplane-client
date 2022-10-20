@@ -16,7 +16,7 @@ class CustomPythonBuild(build_py):
             fp = os.path.join(win_dir, "Microsoft", "WindowsApps", "tons.cmd")
             with open(fp, 'wt') as f:
                 f.write("@python3 -m tons_cli %*")
-        except BaseException as e:
+        except Exception as e:
             pass
 
     def run(self):
@@ -45,7 +45,7 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    install_requires=['requests', 'click'],
+    install_requires=['requests', 'click', 'hyperplane-definitions @ git+https://github.com/hyperplane-cloud/hyperplane-definitions'],
     python_requires=">=3.6",
     entry_points={
         'console_scripts': [

@@ -17,8 +17,21 @@ def list_jobs():
     else:
         if len(jobs) == 0:
             click.echo(f"No jobs found")
-        for job in jobs:
-            click.echo(job)
+        for job_to_echo in jobs:
+            click.echo(job_to_echo)
+
+
+@job.command('list-active')
+def list_jobs():
+    """List all active jobs"""
+    jobs = sdk().get_all_active_jobs()
+    if jobs is None:
+        click.echo("Failed to get active jobs", err=True)
+    else:
+        if len(jobs) == 0:
+            click.echo(f"No active jobs found")
+        for job_to_echo in jobs:
+            click.echo(job_to_echo)
 
 
 @job.command()

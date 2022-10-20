@@ -1,4 +1,5 @@
 # job.py - job object
+from hyperplane_definitions.job_consts import ACTIVE_JOB_STATES
 
 
 class Job(object):
@@ -16,3 +17,6 @@ class Job(object):
 
     def __repr__(self) -> str:
         return f"Job {self.id} [{self.status}] {self.job_name} on {self.instance_type}"
+
+    def is_active(self) -> bool:
+        return self.status in ACTIVE_JOB_STATES
