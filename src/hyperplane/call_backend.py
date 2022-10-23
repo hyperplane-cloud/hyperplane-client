@@ -11,6 +11,7 @@ API_GetAllJobs = f"{BACKEND_URL}/jobs/GetJobs"
 API_CreateJob = f"{BACKEND_URL}/jobs/CreateJob"
 API_GetJobById = f"{BACKEND_URL}/jobs/GetJobByID"
 API_AbortRunningJob = f"{BACKEND_URL}/jobs/AbortRunningJob"
+API_GetAllJobReports = f"{BACKEND_URL}/jobs/GetAllJobReports"
 
 API_CreateSecret = f"{SECRETS_BACKEND_URL}/secrets/CreateSecret"
 API_ListAllSecrets = f"{SECRETS_BACKEND_URL}/secrets/ListAllSecrets"

@@ -4,6 +4,7 @@ import os
 from hyperplane.call_backend import *
 from hyperplane.job import Job
 from hyperplane_definitions.secret_consts import DEFAULT_CATEGORY
+from hyperplane.report import JobReport
 
 
 class hyperplane_sdk(object):
@@ -57,6 +58,17 @@ class hyperplane_sdk(object):
             branch_name=branch_name,
             )
         return new_job
+
+    def get_all_reports(self, job_id: str):
+        reports = call_backend(
+            api_url=API_GetAllJobReports,
+            method=METHOD_GET,
+            params={'ID': job_id},
+            api_token=self.api_token,
+        )
+        if reports is None:
+            return None
+        return [JobReport(report) for report in reports]
 
     def abort_job(self, job_id: str):
         result = call_backend(
