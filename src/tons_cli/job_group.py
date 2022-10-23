@@ -17,8 +17,8 @@ def list_jobs():
     else:
         if len(jobs) == 0:
             click.echo(f"No jobs found")
-        for job_to_echo in jobs:
-            click.echo(job_to_echo)
+        for job in jobs:
+            click.echo(job)
 
 
 @job.command('list-active')
@@ -30,9 +30,9 @@ def list_jobs():
     else:
         if len(jobs) == 0:
             click.echo(f"No active jobs found")
-        for job_to_echo in jobs:
-            click.echo(job_to_echo)
-
+        for job in jobs:
+            click.echo(f"Job: {job.job_name} Status: [{job.status}] Start time: {job.start_time}")
+            click.echo(f"Latest APM: {job.latest_apm}")
 
 @job.command()
 @click.argument('job_id', required=True)
