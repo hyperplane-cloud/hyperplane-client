@@ -59,7 +59,7 @@ class hyperplane_sdk(object):
             )
         return new_job
 
-    def get_all_reports(self, job_id: str):
+    def reports(self, job_id: str):
         reports = call_backend(
             api_url=API_GetAllJobReports,
             method=METHOD_GET,

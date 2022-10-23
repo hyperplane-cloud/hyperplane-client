@@ -78,7 +78,7 @@ def abort(job_id: str):
 @job.command()
 @click.argument('job_id', required=True)
 def get_all_reports(job_id: str):
-    reports = sdk().get_all_reports(job_id)
+    reports = sdk().reports(job_id)
     if reports:
         for report in reports:
             click.echo(report)
