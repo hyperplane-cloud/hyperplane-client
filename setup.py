@@ -45,7 +45,12 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    install_requires=['requests', 'click', 'hyperplane-definitions @ git+https://github.com/hyperplane-cloud/hyperplane-definitions'],
+    install_requires=[
+        'requests',
+        'click',
+        'hyperplane-definitions @ git+https://github.com/hyperplane-cloud/hyperplane-definitions',
+        'prettytable'
+    ],
     python_requires=">=3.6",
     entry_points={
         'console_scripts': [

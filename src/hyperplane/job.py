@@ -1,5 +1,7 @@
 # job.py - job object
 from datetime import datetime
+from typing import List
+from prettytable import PrettyTable
 
 from hyperplane_definitions.job_consts import ACTIVE_JOB_STATES
 
@@ -24,3 +26,13 @@ class Job(object):
 
     def is_active(self) -> bool:
         return self.status in ACTIVE_JOB_STATES
+
+
+def print_pretty_table(jobs: List[Job]) -> str:
+    pt = PrettyTable(['Job', 'Status', 'Start Time', 'Latest APM'], align='l')
+
+    for job in jobs:
+        pt.add_row([job.job_name, job.status, job.start_time, job.latest_apm])
+
+    return pt.get_string()
+

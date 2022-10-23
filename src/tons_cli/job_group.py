@@ -1,5 +1,7 @@
 import json
 import click
+
+from hyperplane.job import print_pretty_table
 from tons_cli.common import sdk
 
 
@@ -17,8 +19,8 @@ def list_jobs():
     else:
         if len(jobs) == 0:
             click.echo(f"No jobs found")
-        for job in jobs:
-            click.echo(job)
+        else:
+            click.echo(print_pretty_table(jobs))
 
 
 @job.command('list-active')
@@ -30,9 +32,9 @@ def list_jobs():
     else:
         if len(jobs) == 0:
             click.echo(f"No active jobs found")
-        for job in jobs:
-            click.echo(f"Job: {job.job_name} Status: [{job.status}] Start time: {job.start_time}")
-            click.echo(f"Latest APM: {job.latest_apm}")
+        else:
+            click.echo(print_pretty_table(jobs))
+
 
 @job.command()
 @click.argument('job_id', required=True)
