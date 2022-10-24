@@ -88,3 +88,14 @@ def abort(job_id: str):
         click.echo(f"Job {job_id} aborted")
     else:
         click.echo(f"Failed to abort job {job_id}", err=True)
+
+
+@job.command()
+@click.argument('job_id', required=True)
+def get_all_reports(job_id: str):
+    reports = sdk().reports(job_id)
+    if reports:
+        for report in reports:
+            click.echo(report)
+    else:
+        click.echo(f"Failed to get all reports for job {job_id}", err=True)
