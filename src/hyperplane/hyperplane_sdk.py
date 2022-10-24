@@ -31,6 +31,10 @@ class hyperplane_sdk(object):
         jobs = [Job(job) for job in jobs]
         return jobs
 
+    def get_all_active_jobs(self):
+        all_jobs = self.get_all_jobs()
+        return [job for job in all_jobs if job.is_active()]
+
     def get_job(self, job_id: str):
         job = call_backend(
             api_url=API_GetJobById,
