@@ -45,8 +45,14 @@ def _connect_to_s3_bucket(bucket_name, user_s3_creds, access_key_secret=None, ac
     return s3_client_or_resource(access_key_id, access_key_secret)
 
 
-def download_from_s3(source_path: str, target_path: str = None, regex_filter: str = None, bucket_name: str = None,
-                     access_key_id: str = None, access_key_secret: str = None):
+def _try_get_s3_creds_from_env():
+    access_key_id = os.environ.get('HYPERPLANE_S3_ACCESS_KEY_ID')
+    access_key_secret = os.environ.get('HYPERPLANE_S3_ACCESS_KEY_SECRET')
+
+    return access_key_id, access_key_secret
+
+
+def download_from_s3(source_path: str, target_path: str = None, regex_filter: str = None):
     """
     Args:
         source_path: for directories put '/' in the end
@@ -54,19 +60,16 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
                      for file: where the file will be saved (including name).
         regex_filter: filter by regex
         bucket_name: bucket name to download from
-        access_key_id: aws access_key_id
-        access_key_secret: aws access_key_secret
-
     """
     user_s3_creds = get_s3_credentials()
 
+    bucket_name = user_s3_creds.get("bucket_url")
     if not bucket_name:
-        bucket_name = user_s3_creds.get("bucket_url")
-        if not bucket_name:
-            report("User didn't specify bucket name and have no bucket configurations in our system")
-            return None
-    s3_resource = _connect_to_s3_bucket(bucket_name=bucket_name, access_key_secret=access_key_secret,
-                                        access_key_id=access_key_id, s3_client_or_resource=_s3_resource,
+        report("User didn't specify bucket name and have no bucket configurations in our system")
+        return None
+    s3_resource = _connect_to_s3_bucket(bucket_name=bucket_name, access_key_id=user_s3_creds.get("access_key_id"),
+                                        access_key_secret=user_s3_creds.get("secret_access_key"),
+                                        s3_client_or_resource=_s3_resource,
                                         user_s3_creds=user_s3_creds)
 
     bucket = s3_resource.Bucket(bucket_name)
@@ -94,8 +97,7 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
         bucket.download_file(obj.key, target_name)
 
 
-def upload_to_s3(source_path, target_path=None, regex_filter: str = None, bucket_name: str = None,
-                 access_key_id: str = None, access_key_secret: str = None, verbose: bool = True):
+def upload_to_s3(source_path: str, target_path: str = None, regex_filter: str = None, verbose: bool = True):
     """
     Upload source path to {bucket}/{target_path}
     Args:
@@ -103,35 +105,33 @@ def upload_to_s3(source_path, target_path=None, regex_filter: str = None, bucket
         target_path: full target path including desired file name for files and directory name for directory.
         regex_filter: if not None, only filename that matches this pattern will be uploaded
         bucket_name: bucket name to upload
-        access_key_id: creds for aws
-        access_key_secret: creds for aws
         verbose: show prints
     Returns:
         None
     """
     user_s3_creds = get_s3_credentials()
+    bucket_name = user_s3_creds.get("bucket_url")
     if not bucket_name:
-        bucket_name = user_s3_creds.get("bucket_url")
-        if not bucket_name:
-            report("User didn't specify bucket name and have no bucket configurations in our system")
-            return None
-    s3_client = _connect_to_s3_bucket(bucket_name=bucket_name, user_s3_creds=user_s3_creds, access_key_id=access_key_id,
-                                      access_key_secret=access_key_secret)
+        report("User didn't specify bucket name and have no bucket configurations in our system")
+        return None
+    s3_client = _connect_to_s3_bucket(bucket_name=bucket_name, user_s3_creds=user_s3_creds,
+                                      access_key_id=user_s3_creds.get("access_key_id"),
+                                      access_key_secret=user_s3_creds.get("secret_access_key"))
     if os.path.isfile(source_path):
         if verbose:
             print('uploading file to s3')
-        return upload_file_to_s3(file_path=source_path, bucket=bucket_name, object_name=target_path,
-                                 regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
+        return _upload_file_to_s3(file_path=source_path, bucket=bucket_name, object_name=target_path,
+                                  regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
     elif os.path.isdir(source_path):
         if verbose:
             print('uploading dir to s3')
-        return upload_directory_to_s3(local_base_directory=source_path, bucket=bucket_name,
-                                      s3_base_directory=target_path,
-                                      regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
+        return _upload_directory_to_s3(local_base_directory=source_path, bucket=bucket_name,
+                                       s3_base_directory=target_path,
+                                       regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
 
 
-def upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_args=None, verbose=False,
-                      regex_filter: str = None):
+def _upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_args=None, verbose=False,
+                       regex_filter: str = None):
     """Upload a file to an S3 bucket
 
     :param file_path: File to upload
@@ -176,8 +176,8 @@ def upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_args
     return f"https://{bucket}.s3.{region}.amazonaws.com/{object_name}"
 
 
-def upload_directory_to_s3(local_base_directory, s3_client, bucket, s3_base_directory, extra_args=None, verbose=False,
-                           regex_filter: str = None,):
+def _upload_directory_to_s3(local_base_directory, s3_client, bucket, s3_base_directory, extra_args=None, verbose=False,
+                            regex_filter: str = None,):
     file_urls = []
     walks = os.walk(local_base_directory)
     for current_directory, dirs, files in walks:
@@ -193,9 +193,9 @@ def upload_directory_to_s3(local_base_directory, s3_client, bucket, s3_base_dire
             else:
                 s3_object_name = relative_path
             # Invoke upload function
-            s3_file_url = upload_file_to_s3(file_path=local_file, bucket=bucket, object_name=s3_object_name,
-                                            extra_args=extra_args, verbose=verbose, regex_filter=regex_filter,
-                                            s3_client=s3_client)
+            s3_file_url = _upload_file_to_s3(file_path=local_file, bucket=bucket, object_name=s3_object_name,
+                                             extra_args=extra_args, verbose=verbose, regex_filter=regex_filter,
+                                             s3_client=s3_client)
             if s3_file_url:
                 file_urls.append(s3_file_url)
     return file_urls
