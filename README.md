@@ -41,8 +41,8 @@ a client-code facing library exposing internal APIs for the hyperplane platform
   #### Download from s3:
   ```
   # example usage:
-  source_path_in_s3 = 'my-bucket-dir-2/'
-  target_path = './my-local-dir-2/'
+  source_path_in_s3 = 'my-bucket-dir-2/'  # when downloading a dir, path should end with '/'
+  target_path = './my-local-dir-2/'       # when downloading a dir, path should end with '/'
   regex_filter = 'file_prefix_[0-9][0-9][0-9]' # file_prefix_100, file_prefix_123, file_prefix_754... 
   
   download_from_s3(source_path=source_path_in_s3, target_path=target_path, regex_filter=regex_filter)
@@ -51,8 +51,8 @@ a client-code facing library exposing internal APIs for the hyperplane platform
   #### Upload to s3:
   ```
   # example usage:
-  target_path = 'my-bucket-dir-2/'
-  source_path_in_my_computer = './my-local-dir-2/'
+  target_path = 'my-bucket-dir-2/'                  # when uploading a dir, path should end with '/'
+  source_path_in_my_computer = './my-local-dir-2/'  # when uploading a dir, path should end with '/'
   regex_filter = 'file_prefix_[0-9][0-9][0-9]' # file_prefix_100, file_prefix_123, file_prefix_754... 
   
   file_paths = upload_to_s3(source_path=source_path_in_my_computer, target_path=target_path, regex_filter=regex_filter)
