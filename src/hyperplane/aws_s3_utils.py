@@ -59,7 +59,6 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
         target_path: for dir: Should end with '/'. files from source_path dir will be uploaded under target_path.
                      for file: where the file will be saved (including name).
         regex_filter: filter by regex
-        bucket_name: bucket name to download from
     """
     user_s3_creds = get_s3_credentials()
 
