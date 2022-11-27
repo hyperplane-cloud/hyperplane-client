@@ -46,6 +46,7 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     install_requires=[
+        'boto3',
         'requests',
         'click',
         'hyperplane-definitions @ git+https://github.com/hyperplane-cloud/hyperplane-definitions',
