@@ -7,49 +7,23 @@ from botocore.exceptions import NoCredentialsError, ClientError
 from hyperplane import get_s3_credentials, report
 
 
-def _s3_client(access_key_id=None, access_key_secret=None):
-    if not access_key_id and not access_key_secret:
-        return boto3.client('s3')
-    session = _s3_session_with_creds(access_key_id, access_key_secret)
-    return session.client('s3')
-
-
-def _s3_resource(access_key_id, access_key_secret):
-    if not access_key_id and not access_key_secret:
-        return boto3.resource('s3')
-    session = _s3_session_with_creds(access_key_id, access_key_secret)
-    return session.resource('s3')
-
-
-def _s3_session_with_creds(access_key_id, access_key_secret):
-    return boto3.Session(
-        aws_access_key_id=access_key_id,
-        aws_secret_access_key=access_key_secret,
-    )
-
-
-def _connect_to_s3_bucket(bucket_name, user_s3_creds, access_key_secret=None, access_key_id=None,
-                          s3_client_or_resource=_s3_client):
+def _get_s3_connector(bucket_name, user_s3_creds, access_key_secret=None, access_key_id=None):
     print(f"Connecting s3 bucket: {bucket_name}")
+
+    if not access_key_id or not access_key_secret:
+        print("Connecting to s3 bucket with stored access key id and secret access key")
+        user_bucket_name = user_s3_creds.get("bucket_url")
+        if bucket_name == user_bucket_name:
+            if not access_key_secret:
+                access_key_secret = user_s3_creds.get("secret_access_key")
+            if not access_key_id:
+                access_key_id = user_s3_creds.get("access_key_id")
+
+    connector = boto3
     if access_key_id and access_key_secret:
-        print("Connecting to s3 bucket with given access key id and secret access key")
-        return s3_client_or_resource(access_key_id, access_key_secret)
+        connector = boto3.Session(aws_access_key_id=access_key_id, aws_secret_access_key=access_key_secret)
 
-    user_bucket_name = user_s3_creds.get("bucket_url")
-    if bucket_name == user_bucket_name:
-        if not access_key_secret:
-            access_key_secret = user_s3_creds.get("secret_access_key")
-        if not access_key_id:
-            access_key_id = user_s3_creds.get("access_key_id")
-
-    return s3_client_or_resource(access_key_id, access_key_secret)
-
-
-def _try_get_s3_creds_from_env():
-    access_key_id = os.environ.get('HYPERPLANE_S3_ACCESS_KEY_ID')
-    access_key_secret = os.environ.get('HYPERPLANE_S3_ACCESS_KEY_SECRET')
-
-    return access_key_id, access_key_secret
+    return connector
 
 
 def download_from_s3(source_path: str, target_path: str = None, regex_filter: str = None):
@@ -66,10 +40,8 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
     if not bucket_name:
         report("User didn't specify bucket name and have no bucket configurations in our system")
         return None
-    s3_resource = _connect_to_s3_bucket(bucket_name=bucket_name, access_key_id=user_s3_creds.get("access_key_id"),
-                                        access_key_secret=user_s3_creds.get("secret_access_key"),
-                                        s3_client_or_resource=_s3_resource,
-                                        user_s3_creds=user_s3_creds)
+    s3_connector = _get_s3_connector(bucket_name=bucket_name, user_s3_creds=user_s3_creds)
+    s3_resource = s3_connector.resource('s3')
 
     bucket = s3_resource.Bucket(bucket_name)
     objects_to_download = list(bucket.objects.filter(Prefix=source_path))
@@ -113,9 +85,9 @@ def upload_to_s3(source_path: str, target_path: str = None, regex_filter: str = 
     if not bucket_name:
         report("User didn't specify bucket name and have no bucket configurations in our system")
         return None
-    s3_client = _connect_to_s3_bucket(bucket_name=bucket_name, user_s3_creds=user_s3_creds,
-                                      access_key_id=user_s3_creds.get("access_key_id"),
-                                      access_key_secret=user_s3_creds.get("secret_access_key"))
+    s3_connector = _get_s3_connector(bucket_name=bucket_name, user_s3_creds=user_s3_creds)
+    s3_client = s3_connector.client('s3')
+
     if os.path.isfile(source_path):
         if verbose:
             print('uploading file to s3')
