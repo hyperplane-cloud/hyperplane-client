@@ -87,22 +87,24 @@ def upload_to_s3(source_path: str, target_path: str = None, regex_filter: str = 
         return None
     s3_connector = _get_s3_connector(bucket_name=bucket_name, user_s3_creds=user_s3_creds)
     s3_client = s3_connector.client('s3')
-
+    regex_filter_compiled = None
+    if regex_filter:
+        regex_filter_compiled = re.compile(regex_filter)
     if os.path.isfile(source_path):
         if verbose:
             print('uploading file to s3')
         return _upload_file_to_s3(file_path=source_path, bucket=bucket_name, object_name=target_path,
-                                  regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
+                                  regex_filter=regex_filter_compiled, s3_client=s3_client, verbose=verbose)
     elif os.path.isdir(source_path):
         if verbose:
             print('uploading dir to s3')
         return _upload_directory_to_s3(local_base_directory=source_path, bucket=bucket_name,
                                        s3_base_directory=target_path,
-                                       regex_filter=regex_filter, s3_client=s3_client, verbose=verbose)
+                                       regex_filter=regex_filter_compiled, s3_client=s3_client, verbose=verbose)
 
 
 def _upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_args=None, verbose=False,
-                       regex_filter: str = None):
+                       regex_filter: re.Pattern = None):
     """Upload a file to an S3 bucket
 
     :param file_path: File to upload
@@ -116,7 +118,6 @@ def _upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_arg
 
     """
     if regex_filter:
-        regex_filter = re.compile(regex_filter)
         if regex_filter.search(file_path) is None:
             if verbose:
                 print(f'File: {file_path} will not be uploaded since it doesnt match the filter')
@@ -148,7 +149,7 @@ def _upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_arg
 
 
 def _upload_directory_to_s3(local_base_directory, s3_client, bucket, s3_base_directory, extra_args=None, verbose=False,
-                            regex_filter: str = None,):
+                            regex_filter: re.Pattern = None,):
     file_urls = []
     walks = os.walk(local_base_directory)
     for current_directory, dirs, files in walks:
