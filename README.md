@@ -28,7 +28,7 @@ target_path = './my-local-dir-1/file-name-in-my-computer-1.data'
 download_from_s3(source_path=source_path_in_s3, target_path=target_path)
       
   ```
-  #### Upload a file to s3 from your local machine:
+  #### Upload a single file to s3 from your local machine:
   ```python
 from hyperplane.aws_s3_utils import upload_to_s3
 
