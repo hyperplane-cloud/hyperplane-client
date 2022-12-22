@@ -26,12 +26,16 @@ def _get_s3_connector(bucket_name, user_s3_creds, access_key_secret=None, access
     return connector
 
 
-def download_from_s3(source_path: str, target_path: str = None, regex_filter: str = None):
+def download_from_s3(source_path: str,
+                     target_path: str=None,
+                     regex_filter: str=None,
+                     create_target_path: bool=True):
     """
     Args:
         source_path: for directories put '/' in the end
         target_path: for dir: Should end with '/'. files from source_path dir will be uploaded under target_path.
                      for file: where the file will be saved (including name).
+        create_target_path: create the target path .
         regex_filter: filter by regex
     """
     user_s3_creds = get_s3_credentials()
@@ -56,6 +60,12 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
             # if target path is not mentioned, store as in the bucket root, keep original files` hierarchy.
             target_name = relpath_to_source
         elif target_path.endswith('/'):
+            if not os.path.exists(target_path):
+                if create_target_path:
+                    Path(target_path).mkdir(parents=True, exist_ok=True)
+                else:
+                    print(f'ERROR: target path not found {target_path}')
+                    return
             # target path is a dir, keep original files` hierarchy.
             target_name = target_path + relpath_to_source
         else:
@@ -63,20 +73,24 @@ def download_from_s3(source_path: str, target_path: str = None, regex_filter: st
             target_name = target_path
 
         dir_to = os.path.dirname(target_name)
-        Path(dir_to).mkdir(parents=True, exist_ok=True)
+        if not os.path.exists(dir_to):
+            if create_target_path:
+                Path(dir_to).mkdir(parents=True, exist_ok=True)
+            else:
+                print(f'ERROR: target path not found {dir_to}')
+                return
 
         bucket.download_file(obj.key, target_name)
 
 
-def upload_to_s3(source_path: str, target_path: str = None, regex_filter: str = None, verbose: bool = True):
+def upload_to_s3(source_path: str, target_path: str=None, regex_filter: str=None, verbose: bool=True):
     """
     Upload source path to {bucket}/{target_path}
     Args:
-        source_path: if a directory, all files and directories under source_path will be upload recursively under target_path
+        source_path: if a directory, all files and directories under source_path will be uploaded recursively to target_path
         target_path: full target path including desired file name for files and directory name for directory.
         regex_filter: if not None, only filename that matches this pattern will be uploaded
-        bucket_name: bucket name to upload
-        verbose: show prints
+        verbose: show additional debug prints
     Returns:
         None
     """
@@ -91,13 +105,9 @@ def upload_to_s3(source_path: str, target_path: str = None, regex_filter: str = 
     if regex_filter:
         regex_filter_compiled = re.compile(regex_filter)
     if os.path.isfile(source_path):
-        if verbose:
-            print('uploading file to s3')
         return _upload_file_to_s3(file_path=source_path, bucket=bucket_name, object_name=target_path,
                                   regex_filter=regex_filter_compiled, s3_client=s3_client, verbose=verbose)
     elif os.path.isdir(source_path):
-        if verbose:
-            print('uploading dir to s3')
         return _upload_directory_to_s3(local_base_directory=source_path, bucket=bucket_name,
                                        s3_base_directory=target_path,
                                        regex_filter=regex_filter_compiled, s3_client=s3_client, verbose=verbose)
@@ -149,7 +159,7 @@ def _upload_file_to_s3(file_path, bucket, s3_client, object_name=None, extra_arg
 
 
 def _upload_directory_to_s3(local_base_directory, s3_client, bucket, s3_base_directory, extra_args=None, verbose=False,
-                            regex_filter: re.Pattern = None,):
+                            regex_filter: re.Pattern=None):
     file_urls = []
     walks = os.walk(local_base_directory)
     for current_directory, dirs, files in walks:
