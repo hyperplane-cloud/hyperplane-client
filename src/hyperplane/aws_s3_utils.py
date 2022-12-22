@@ -60,12 +60,9 @@ def download_from_s3(source_path: str,
             # if target path is not mentioned, store as in the bucket root, keep original files` hierarchy.
             target_name = relpath_to_source
         elif target_path.endswith('/'):
-            if not os.path.exists(target_path):
-                if create_target_path:
-                    Path(target_path).mkdir(parents=True, exist_ok=True)
-                else:
-                    print(f'ERROR: target path not found {target_path}')
-                    return
+            if not os.path.exists(target_path) and not create_target_path:
+                print(f'ERROR: target path not found {target_path}')
+                return
             # target path is a dir, keep original files` hierarchy.
             target_name = target_path + relpath_to_source
         else:
