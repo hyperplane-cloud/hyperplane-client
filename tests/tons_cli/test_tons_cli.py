@@ -3,7 +3,7 @@ import logging
 from unittest.mock import patch
 from click.testing import CliRunner
 from tons_cli.__main__ import cli
-from hyperplane_definitions.job_consts import JOB_CANCELLED_BY_USER
+from hyperplane_definitions.job_consts import JOB_STATUS_CANCELLED
 
 
 def test_cli_get_token_from_env():
@@ -61,7 +61,7 @@ def test_job():
     job_dict_s = result_get.output.strip()
     job_dict = json.loads(job_dict_s)
     assert job_dict['ID'] == job_id
-    assert job_dict['job_status'] == JOB_CANCELLED_BY_USER
+    assert job_dict['job_status'] == JOB_STATUS_CANCELLED
     assert job_dict['git_repo_url'] == repo_url
     assert job_dict['instance_type'] == instance_type
     # Get all jobs and find the canceled job
@@ -69,6 +69,6 @@ def test_job():
     assert result_all.exit_code == 0
     result_all_s = result_all.output.strip()
     result_all_lines = result_all_s.split('\n')
-    expected_job_line = f"Job {job_id} [{JOB_CANCELLED_BY_USER}] {job_name} on {instance_type}"
+    expected_job_line = f"Job {job_id} [{JOB_STATUS_CANCELLED}] {job_name} on {instance_type}"
     assert any(line.strip() == expected_job_line for line in result_all_lines) 
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 from prettytable import PrettyTable
 
-from hyperplane_definitions.job_consts import ACTIVE_JOB_STATES
+from hyperplane_definitions.job_consts import JOB_STATUSES_ACTIVE
 
 
 class Job(object):
@@ -25,7 +25,7 @@ class Job(object):
         return f"Job {self.id} [{self.status}] {self.job_name} on {self.instance_type}"
 
     def is_active(self) -> bool:
-        return self.status in ACTIVE_JOB_STATES
+        return self.status in JOB_STATUSES_ACTIVE
 
 
 def print_pretty_table(jobs: List[Job]) -> str:
