@@ -34,7 +34,7 @@ def get_s3_credentials() -> dict:
 
 
 def _get_secret_from_server(secret_name: str) -> Optional[str]:
-    if ".." not in sys.path:
-        sys.path.append("..")
+    if "/" not in sys.path:
+        sys.path.append("/")
     from get_user_secret import get_user_secret as get_secret_from_server
     return get_secret_from_server(secret_name)

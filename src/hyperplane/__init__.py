@@ -25,8 +25,8 @@ def get_user_id():
 
 def report(analytics_str):
     if is_job_running_on_server():
-        if ".." not in sys.path:
-            sys.path.append("..")
+        if "/" not in sys.path:
+            sys.path.append("/")
         from report_apm import report as report_from_server
         return report_from_server(analytics_str)
 
