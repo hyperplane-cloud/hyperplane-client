@@ -50,7 +50,9 @@ class hyperplane_sdk(object):
     def create_job(self, job_name: str = "", git_repo_url: str = "",
                    branch_name: str = "", hyperplane_config: str = "",
                    instance_type: str = "", instance_count: str = "",
-                   docker_image: str = "", s3_input_path: str = ""):
+                   docker_image: str = "", s3_input_path: str = "",
+                   docker_params: str = "",
+                   ):
         new_job = call_backend(
             api_url=API_CreateJob,
             method=METHOD_POST,
@@ -63,6 +65,7 @@ class hyperplane_sdk(object):
             branch_name=branch_name,
             docker_image=docker_image,
             s3_input_path=s3_input_path,
+            docker_params=docker_params,
             )
         return new_job
 
