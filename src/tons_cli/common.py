@@ -10,7 +10,7 @@ def get_path_to_conf_dir() -> str:
     if os.name == 'nt':
         base_path = os.environ.get('USERPROFILE', base_path)
     elif os.name == 'posix':
-        base_path = "~"
+        base_path = os.environ.get('HOME', base_path)
     return os.path.join(base_path, ".tons")
 
 
