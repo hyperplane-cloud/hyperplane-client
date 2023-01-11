@@ -44,7 +44,7 @@ def get(job_id: str):
     if job is None:
         click.echo("Failed to get job", err=True)
     else:
-        click.echo(json.dumps(job.job_dict))
+        click.echo(json.dumps(job.job_dict, indent=4))
 
 
 @job.command()

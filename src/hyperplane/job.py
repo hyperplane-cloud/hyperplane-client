@@ -29,7 +29,7 @@ class Job(object):
 
 
 def print_pretty_table(jobs: List[Job]) -> str:
-    pt = PrettyTable(['Job', 'Status', 'Start Time', 'Latest APM'], align='l')
+    pt = PrettyTable(['Job', 'Status', 'Start Time', 'Latest APM'], align='l',sortby='Start Time')
 
     for job in jobs:
         pt.add_row([job.job_name, job.status, job.start_time, job.latest_apm])
