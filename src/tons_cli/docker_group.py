@@ -1,8 +1,6 @@
 import json
-from typing import Optional, Tuple
+from typing import Optional
 import click
-
-from hyperplane.job import print_pretty_table
 from tons_cli.common import sdk
 
 
