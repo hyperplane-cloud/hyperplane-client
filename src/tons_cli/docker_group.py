@@ -64,7 +64,7 @@ def print_image_list(jobs: List[Job]) -> str:
         job_dict = job.job_dict
         if job.status == "Done" and job_dict and job_dict.get('docker_image') == "custom_app:stable-diffusion":
             outputs = job_dict.get('outputs', "").split(";")
-            if len(outputs) == 3:
-                pt.add_row([job.start_time, job.id, job_dict.get('docker_params'), outputs[2]])
+            for output in outputs[2:]:
+                pt.add_row([job.start_time, job.id, job_dict.get('docker_params'), output])
 
     return pt.get_string()
