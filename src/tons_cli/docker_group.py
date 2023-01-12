@@ -1,7 +1,10 @@
-import json
-from typing import Optional
 import click
+import json
+from prettytable import PrettyTable
+from typing import Optional, List
+from hyperplane.job import Job
 from tons_cli.common import sdk
+
 
 
 @click.group()
@@ -26,7 +29,7 @@ def create(
     if not docker_params:
         docker_params = ""
     if not job_name:
-        job_name = f"CLI - {docker_image}"
+        job_name = f"docker {docker_image} - {docker_params}"
     response = sdk().create_job(
         job_name=job_name,
         instance_type=instance_type,
@@ -40,3 +43,28 @@ def create(
     else:
         click.echo(json.dumps(response, indent=2))
         
+@docker.command('list')
+def list_jobs():
+    """List all done jobs with s3 path in outputs"""
+    jobs = sdk().get_all_jobs()
+    if jobs is None:
+        click.echo("Failed to get jobs", err=True)
+    else:
+        if len(jobs) == 0:
+            click.echo(f"No jobs found")
+        else:
+            click.echo(print_image_list(jobs))
+
+
+def print_image_list(jobs: List[Job]) -> str:
+
+    pt = PrettyTable(['Start Time', 'ID', 'Params', 'Output'], align='l',sortby='Start Time')
+
+    for job in jobs:
+        job_dict = job.job_dict
+        if job.status == "Done" and job_dict and job_dict.get('docker_image') == "custom_app:stable-diffusion":
+            outputs = job_dict.get('outputs', "").split(";")
+            if len(outputs) == 3:
+                pt.add_row([job.start_time, job.id, job_dict.get('docker_params'), outputs[2]])
+
+    return pt.get_string()
