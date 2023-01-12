@@ -2,6 +2,7 @@ import click
 import json
 from prettytable import PrettyTable
 from typing import Optional, List
+from urllib import request
 from hyperplane.job import Job
 from tons_cli.common import sdk
 
@@ -42,7 +43,8 @@ def create(
         click.echo("Failed to create job", err=True)
     else:
         click.echo(json.dumps(response, indent=2))
-        
+
+
 @docker.command('list')
 def list_jobs():
     """List all done jobs with s3 path in outputs"""
@@ -54,6 +56,26 @@ def list_jobs():
             click.echo(f"No jobs found")
         else:
             click.echo(print_image_list(jobs))
+
+
+@docker.command('download')
+@click.argument('job_id', required=True)
+def download_images(job_id: str):
+    """Download all images of job from s3"""
+    job = sdk().get_job(job_id)
+    if job is None:
+        click.echo("Failed to get job", err=True)
+    elif job.status != "Done":
+        click.echo("Job is not in Done status")
+    elif job.job_dict is None or job.job_dict.get('docker_image') != "custom_app:stable-diffusion":
+        click.echo("Job is not from stable-diffusion")
+    else:
+        outputs = job.job_dict.get('outputs', "").split(";")
+        for output in outputs:
+            local_file_name = output[0:output.index('?')].split('/')[-1]
+            print(f"Downloading to {local_file_name} from {output}")
+            response = request.urlretrieve(output, local_file_name)
+            print(response)
 
 
 def print_image_list(jobs: List[Job]) -> str:
